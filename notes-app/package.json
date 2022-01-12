@@ -4,13 +4,14 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js -w"
+    "dev": "nodemon app.js add -w"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.1",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "yargs": "^17.3.1"
   }
 }
