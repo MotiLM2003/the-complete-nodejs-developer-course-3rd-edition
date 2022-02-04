@@ -13,6 +13,14 @@ const fs = require('fs');
 
 // fs.writeFileSync('1-json.json', bookJSON);
 
-const dataBuffer = fs.readFileSync('1-json.json', 'utf-8');
-const data = JSON.parse(dataBuffer);
-console.log(data.title);
+// const dataBuffer = fs.readFileSync('1-json.json', 'utf-8');
+// const data = JSON.parse(dataBuffer);
+// console.log(data.title);
+
+// challange
+
+const dataString = fs.readFileSync('1-json.json', 'utf-8');
+const data = JSON.parse(dataString);
+console.log(data);
+data.name = 'Moti';
+fs.writeFileSync('1-json.json', JSON.stringify(data));
