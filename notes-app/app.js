@@ -1,7 +1,13 @@
 // const validator = require('validator');
 const chalk = require('chalk');
 const yargs = require('yargs');
-const { addNote, getNotes, removeNote } = require('./notes.js');
+const {
+  addNote,
+  getNotes,
+  removeNote,
+  listNotes,
+  readNote,
+} = require('./notes.js');
 
 // customize yargs version
 // yargs.version('1.1.0');
@@ -43,17 +49,24 @@ yargs.command({
   },
 });
 
-// read
 yargs.command({
   command: 'list',
-  describe: 'get a list of notes',
-  handler: () => console.log('showing list of notes'),
+  describe: 'List all notes',
+  builder: {},
+  handler: (argv) => {
+    listNotes(argv.title);
+  },
 });
 
 yargs.command({
   command: 'read',
   describe: 'reading a note',
-  handler: () => console.log('reading a specific note'),
+  builder: {
+    title: {
+      demandOption: true,
+    },
+  },
+  handler: (argv) => readNote(argv.title),
 });
 
 yargs.parse();
