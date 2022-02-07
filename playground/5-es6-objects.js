@@ -8,3 +8,7 @@ const product = {
 const { label, ...test } = product;
 console.log('testing');
 console.log(test);
+
+// const transaction = ('order', product) => {
+
+// }
