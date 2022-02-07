@@ -1,17 +1,16 @@
+const path = require('path');
 const express = require('express');
 
+const publicPath = path.join(__dirname, '../public');
+
 const app = express();
+console.log('-', publicPath, '-');
+
+app.use(express.static(publicPath));
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-  res.send('main page');
-});
-
-app.get('/help', (req, res) => {
-  res.send('help page');
-});
-app.get('/about', (req, res) => {
-  res.send('about page');
+  res.send('<h1>main page</h1>');
 });
 app.get('/weather', (req, res) => {
   res.send('weather page');
