@@ -4,7 +4,7 @@ const geoCode = require('./utils/geocode');
 const forecast = require('./utils/forecast');
 const { config } = require('process');
 const location = process.argv[2];
-console.log(location[2]);
+// console.log(location[2]);
 
 geoCode(location, (err, geoData) => {
   if (err) {
@@ -18,6 +18,7 @@ geoCode(location, (err, geoData) => {
         console.log('Data', data);
       }
     });
+
     // console.log(data);
   }
 });
