@@ -3,12 +3,17 @@
     <meta charset='UTF-8' />
     <meta http-equiv='X-UA-Compatible' content='IE=edge' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Root page</title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <script src='/scripts/js.js'></script>
+    <title>About page</title>
   </head>
   <body>
-    <h1>{{title}}</h1>
-    <p>Created by {{name}}</p>
+    {{>header}}
+    <img
+      src='./images/robot.png'
+      alt='robot img'
+      style='width: 140px; height: 140px'
+    />
+
+     {{!-- Footer --}}
+   {{>footer}}
   </body>
 </html>

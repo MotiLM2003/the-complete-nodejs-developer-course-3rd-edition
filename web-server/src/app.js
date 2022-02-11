@@ -1,12 +1,19 @@
 const path = require('path');
 const express = require('express');
+const hbs = require('hbs');
 
+// Define paths for express config.
 const publicPath = path.join(__dirname, '../public');
-const app = express();
+const viewsPath = path.join(__dirname, '../templates/views');
+const partialsPath = path.join(__dirname, '../templates/partials');
 
+const app = express();
 app.set('view engine', 'hbs');
+app.set('views', viewsPath);
+hbs.registerPartials(partialsPath);
+
 app.use(express.static(publicPath));
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.get('/', (req, res) => {
   res.render('index', {
