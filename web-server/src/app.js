@@ -33,6 +33,22 @@ app.get('/weather', (req, res) => {
   res.send({ location: 'Bat Yam', forecast: 'Its hot as hell in here' });
 });
 
+app.get('/help/*', (req, res) => {
+  res.render('404', {
+    title: '404',
+    errorMessage: 'Help article not found.',
+    name: 'Moti Elmakies',
+  });
+});
+
+app.get('*', (req, res) => {
+  res.render('404', {
+    title: '404',
+    errorMessage: 'Page not found.',
+    name: 'Moti Elmakies',
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Listeining on port ${PORT}`);
 });
