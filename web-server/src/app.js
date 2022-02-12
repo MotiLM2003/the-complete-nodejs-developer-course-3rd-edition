@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 5000;
 
 app.get('/', (req, res) => {
   res.render('index', {
-    title: 'Dynamic',
+    title: 'Weather',
     name: 'Moti Elmakies',
   });
 });
@@ -43,16 +43,15 @@ app.get('/weather', (req, res) => {
   //   address,
   // });
 
-  geoCode(address, (err, geoData) => {
+  geoCode(address, (err, { latitude, longitude, location } = {}) => {
     if (err) {
       return res.send({ error: err });
     } else {
-      console.log(`forecast for ${geoData.location}`);
-      forecast(geoData.latitude, geoData.longitude, (error, data) => {
+      forecast(latitude, longitude, (error, data) => {
         if (err) {
           return res.send({ error: err });
         } else {
-          res.send({ forecast: data, address, location: geoData.location });
+          res.send({ forecast: data, address, location: location });
         }
       });
 
