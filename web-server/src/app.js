@@ -35,7 +35,7 @@ app.get('/help', (req, res) => {
 app.get('/weather', (req, res) => {
   const { address = null } = req.query;
   if (!address) {
-    return res.send({ message: 'You must provide an address.' });
+    return res.send({ error: 'You must provide an address.' });
   }
   // res.send({
   //   location: 'Bat Yam',
@@ -71,7 +71,7 @@ app.get('/help/*', (req, res) => {
 app.get('/products', (req, res) => {
   const { search = null } = req.query;
   if (!search) {
-    return res.send({ message: 'you must provide a search term' });
+    return res.send({ error: 'you must provide a search term' });
   }
   console.log(req.query);
   res.send({ products: [] });
