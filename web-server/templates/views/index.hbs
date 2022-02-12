@@ -5,16 +5,25 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Root page</title>
     <link rel='stylesheet' href='/css/style.css' />
-    <script src='/scripts/js.js'></script>
+   
   </head>
   <body>
     <div class="main-content">
     {{!-- Header --}}
     {{>header}}
     <p>Use this site to get your weather.</p>
+
+    <form >
+      <input type="text"  id="search" placeholder="Search for a location" />
+      <button>
+          Search
+      </button>
+    </form>
     </div>
    
    {{!-- Footer --}}
    {{>footer}}
+
+    <script src='/scripts/js.js'></script>
   </body>
 </html>
