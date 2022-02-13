@@ -1,5 +1,14 @@
-const doWork = async () => {
-  return 'hello world';
+const add = (a, b) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(a + b);
+    }, 2000);
+  });
 };
 
-doWork().then((value) => console.log(value));
+const doWork = async () => {
+  const sum = await add(2, 4);
+  console.log(sum);
+};
+
+doWork();
