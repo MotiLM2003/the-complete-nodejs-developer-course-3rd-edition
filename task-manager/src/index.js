@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 require('./db/mongoose');
+const bcrypt = require('bcrypt');
 
 // importing user routers
 const userRouters = require('./routes/usersRoutes');

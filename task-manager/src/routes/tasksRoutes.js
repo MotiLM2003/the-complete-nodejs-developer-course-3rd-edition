@@ -37,13 +37,20 @@ router.get('/tasks/:id', async (req, res) => {
 
 // update task.
 router.patch('/tasks/:id', async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedFields = ['description', 'completed'];
   const id = req.params.id;
   const filter = req.body;
   try {
-    const task = await Task.findByIdAndUpdate(id, filter, {
-      new: true,
-      runValidation: true,
-    });
+    // const task = await Task.findByIdAndUpdate(id, filter, {
+    //   new: true,
+    //   runValidation: true,
+    // });
+
+    const task = await Task.findById(id);
+    updates.forEach((update) => task[(update = req.body[update])]);
+    task.save();
+
     res.send(task);
   } catch (error) {
     res.status(400).send(error);
