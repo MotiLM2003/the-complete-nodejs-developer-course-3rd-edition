@@ -40,7 +40,7 @@ router.get('/tasks', auth, async (req, res) => {
   options.sort = sort;
 
   const owner = req.user._id;
-  console.log(' options: ', options);
+
   try {
     // const tasks = await Task.find({ owner });
     await req.user.populate({
