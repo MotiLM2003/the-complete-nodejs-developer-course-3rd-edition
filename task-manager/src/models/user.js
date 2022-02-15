@@ -5,47 +5,52 @@ const jwt = require('jsonwebtoken');
 const Task = require('./tasks');
 // const { use } = require('../routes/tasksRoutes');
 
-const userSchema = mongoose.Schema({
-  name: { type: String, required: true, trim: true },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-    unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Invalid e-mail');
-      }
+const userSchema = mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Invalid e-mail');
+        }
+      },
     },
+    age: {
+      type: Number,
+      required: true,
+      validate(value) {
+        if (value < 1) {
+          throw new Error('Age must be a positive number');
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      validate(value) {
+        if (value.includes('password')) {
+          throw new Error('Passowrd cannot contain "password"');
+        } else if (value.length <= 5) {
+          throw new Error('Password must be at least 6 characters long');
+        }
+      },
+    },
+    tokens: [
+      {
+        token: { type: String, required: true },
+      },
+    ],
   },
-  age: {
-    type: Number,
-    required: true,
-    validate(value) {
-      if (value < 1) {
-        throw new Error('Age must be a positive number');
-      }
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-    trim: true,
-    validate(value) {
-      if (value.includes('password')) {
-        throw new Error('Passowrd cannot contain "password"');
-      } else if (value.length <= 5) {
-        throw new Error('Password must be at least 6 characters long');
-      }
-    },
-  },
-  tokens: [
-    {
-      token: { type: String, required: true },
-    },
-  ],
-});
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
@@ -97,7 +102,9 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('remove', async function (next) {
+  const user = this;
   const { _id: owner } = user;
+  console.log('removing tasks', owner);
   await Task.deleteMany({ owner });
   next();
 });

@@ -1,11 +1,18 @@
 const mongoose = require('mongoose');
 // const validator = require('validator');
 
-const tasksSchema = mongoose.Schema({
-  description: { type: String, required: true, trim: true },
-  completed: { type: Boolean, default: false },
-  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'users' },
-});
+const tasksSchema = mongoose.Schema(
+  {
+    description: { type: String, required: true, trim: true },
+    completed: { type: Boolean, default: false },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'users',
+    },
+  },
+  { timestamps: true }
+);
 
 tasksSchema.pre('save', async function (next) {
   const task = this;

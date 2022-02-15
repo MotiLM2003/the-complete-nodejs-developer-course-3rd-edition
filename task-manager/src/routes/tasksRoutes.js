@@ -61,7 +61,6 @@ router.patch('/tasks/:id', auth, async (req, res) => {
       return res.status(404).send();
     }
     updates.forEach((update) => {
-      console.log('update', req.body[update]);
       return (task[update] = req.body[update]);
     });
     task.save();
@@ -76,7 +75,6 @@ router.delete('/tasks/:id', auth, async (req, res) => {
   const { _id: owner } = req.user;
 
   try {
-    console.log(id, owner);
     // const deleted = await Task.findByIdAndDelete(id);
     const deleted = await Task.findOneAndDelete({ id, owner });
     res.send(deleted);
