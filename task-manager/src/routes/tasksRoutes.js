@@ -54,12 +54,16 @@ router.patch('/tasks/:id', auth, async (req, res) => {
     //   runValidation: true,
     // });
 
+    //
     // const task = await Task.findById(id);
-    const task = await findOne({ id, owner });
+    const task = await Task.findOne({ id, owner });
     if (!task) {
       return res.status(404).send();
     }
-    updates.forEach((update) => task[(update = req.body[update])]);
+    updates.forEach((update) => {
+      console.log('update', req.body[update]);
+      return (task[update] = req.body[update]);
+    });
     task.save();
     res.send(task);
   } catch (error) {
@@ -67,10 +71,14 @@ router.patch('/tasks/:id', auth, async (req, res) => {
   }
 });
 
-router.delete('/tasks/:id', async (req, res) => {
+router.delete('/tasks/:id', auth, async (req, res) => {
   const { id } = req.params;
+  const { _id: owner } = req.user;
+
   try {
-    const deleted = await Task.findByIdAndDelete(id);
+    console.log(id, owner);
+    // const deleted = await Task.findByIdAndDelete(id);
+    const deleted = await Task.findOneAndDelete({ id, owner });
     res.send(deleted);
   } catch (error) {
     res.status(400).send(error);
