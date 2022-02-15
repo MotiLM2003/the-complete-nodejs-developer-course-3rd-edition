@@ -2,7 +2,7 @@ const express = require('express');
 const router = new express.Router();
 const auth = require('../middleware/auth');
 const User = require('../models/user');
-const { use } = require('./tasksRoutes');
+const sharp = require('sharp');
 const multer = require('multer');
 // creating new user
 router.post('/users', async (req, res) => {
@@ -141,8 +141,14 @@ router.post(
 
   avatar.single('avatar'),
   async (req, res) => {
-    req.user.avatar = req.file.buffer;
     // console.log(req.user.avatar);
+
+    const buffer = await sharp(req.file.buffer)
+      .png()
+      .resize({ width: 250, height: 250 })
+      .toBuffer();
+
+    req.user.avatar = buffer;
     await req.user.save();
     res.send();
   },
@@ -168,7 +174,7 @@ router.get('/users/:id/avatar', async (req, res) => {
       return res.status(404).send();
     }
 
-    res.set('Content-Type', 'image/jpg');
+    res.set('Content-Type', 'image/png');
     res.send(user.avatar);
   } catch (error) {}
 });
