@@ -1,35 +1,60 @@
 const express = require('express');
 const router = new express.Router();
-const User = require('../models/user');
+const auth = require('../middleware/auth');
 
+const User = require('../models/user');
+const { use } = require('./tasksRoutes');
 // creating new user
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
-    res.status(201).send(user);
+    const token = await user.generateAuthToken();
+    res.status(201).send({ user, token });
   } catch (err) {
     res.status(400).send(err);
   }
 });
 
-// Login user
+router.post('/users/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(
+      (token) => token.token !== req.token
+    );
+    await req.user.save();
+    res.send(req.user.tokens);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
 
+router.post('/users/logoutAll', auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send(req.user.tokens);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+// Login user
 router.post('/users/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findByCredentials(email, password);
-    res.send(user);
+    const token = await user.generateAuthToken();
+    res.send({ user: user, token });
   } catch (error) {
+    console.log(error);
     res.status(400).send('could not authenticate user');
   }
 });
 
-// get all users
-router.get('/users/', async (req, res) => {
-  const users = await User.find({});
-  res.status(200).send(users);
+// get profile
+router.get('/users/profile', auth, async (req, res) => {
+  res.status(200).send(req.user);
   try {
   } catch (err) {
     res.status(500).send(err);
@@ -37,7 +62,7 @@ router.get('/users/', async (req, res) => {
 });
 
 // get user by id
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:id', auth, async (req, res) => {
   const id = req.params.id;
   try {
     const user = await User.findById(id);
@@ -48,7 +73,7 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-router.patch('/users/:id', async (req, res) => {
+router.patch('/users/:id', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
 
@@ -76,7 +101,7 @@ router.patch('/users/:id', async (req, res) => {
   }
 });
 
-router.delete('/users/:id', async (req, res) => {
+router.delete('/users/:id', auth, async (req, res) => {
   const id = req.params.id;
 
   try {

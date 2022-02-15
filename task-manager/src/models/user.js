@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+// const { use } = require('../routes/tasksRoutes');
+
 const userSchema = mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: {
@@ -36,6 +39,11 @@ const userSchema = mongoose.Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: { type: String, required: true },
+    },
+  ],
 });
 
 userSchema.statics.findByCredentials = async (email, password) => {
@@ -51,6 +59,31 @@ userSchema.statics.findByCredentials = async (email, password) => {
   }
 
   return user;
+};
+const secret = 'coolworldman';
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id.toString() }, secret);
+  console.log('token', user.tokens);
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+  return token;
+};
+
+userSchema.virtual('tasks', {
+  ref: 'tasks',
+  localField: '_id',
+  foreignField: 'owner',
+});
+
+userSchema.methods.toJson = function () {
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.tokens;
+  delete userObject.password;
+  delete userObject.__v;
+
+  return userObject;
 };
 
 // hash password before saving
