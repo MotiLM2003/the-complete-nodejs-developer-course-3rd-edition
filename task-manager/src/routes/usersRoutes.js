@@ -113,9 +113,9 @@ router.delete('/users/:id', auth, async (req, res) => {
 });
 
 const avatar = multer({
-  dest: 'src/avatar',
+  // dest: 'src/avatar', -- use this for saving it to the local driver
   limits: {
-    fileSize: 1000000,
+    fileSize: 5000000,
   },
   fileFilter(req, file, cb) {
     // **** error upload the file
@@ -130,21 +130,47 @@ const avatar = multer({
     }
     cb(undefined, true);
 
-    console.log(file);
+    // console.log(file);
   },
 });
 
+// uploading and saving avatar
 router.post(
   '/users/me/avatar',
   auth,
 
   avatar.single('avatar'),
   async (req, res) => {
+    req.user.avatar = req.file.buffer;
+    // console.log(req.user.avatar);
+    await req.user.save();
     res.send();
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message });
   }
 );
+
+router.delete('/users/me/avatar', auth, async (req, res) => {
+  try {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
+router.get('/users/:id/avatar', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.avatar) {
+      return res.status(404).send();
+    }
+
+    res.set('Content-Type', 'image/jpg');
+    res.send(user.avatar);
+  } catch (error) {}
+});
 
 module.exports = router;
