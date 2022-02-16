@@ -4,14 +4,23 @@ const auth = require('../middleware/auth');
 const User = require('../models/user');
 const sharp = require('sharp');
 const multer = require('multer');
+const { sendGenericEmail } = require('../emails/account');
 // creating new user
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
+    const email = {
+      to: user.email,
+      subject: `Welcome to the site ${user.name}`,
+      text: `Welcome my friend, this is youre email ${user.email}`,
+    };
+    sendGenericEmail(email);
+    console.log('email sent:', email);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
+    console.log('here', err.message);
     res.status(400).send(err);
   }
 });
@@ -103,9 +112,15 @@ router.patch('/users/:id', auth, async (req, res) => {
 
 router.delete('/users/:id', auth, async (req, res) => {
   const id = req.params.id;
+  const { name, email } = req.user;
 
   try {
     const deleted = await User.findByIdAndDelete(id);
+    sendGenericEmail({
+      to: email,
+      subject: "We are sorry you're leaaving",
+      text: `Hello, ${name}, We are sorry to see you leave we hope that we will meet again one day!`,
+    });
     res.send(deleted);
   } catch (error) {
     res.status(400).send(error);
