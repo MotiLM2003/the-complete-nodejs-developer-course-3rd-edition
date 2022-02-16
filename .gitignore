@@ -1,5 +1,5 @@
 node_modules
-config
+task-manager/config
 .env
 playground
 task-manager/playground
