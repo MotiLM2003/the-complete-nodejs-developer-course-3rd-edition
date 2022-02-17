@@ -7,4 +7,17 @@ const celsiusToFahrenheit = (temp) => {
   return temp * 1.8 + 32;
 };
 
-module.exports = { calculateTip, celsiusToFahrenheit, fahrenheitToCelsius };
+const add = (a, b) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(a + b);
+    }, 2000);
+  });
+};
+
+module.exports = {
+  calculateTip,
+  celsiusToFahrenheit,
+  fahrenheitToCelsius,
+  add,
+};
