@@ -8,6 +8,7 @@ const { sendGenericEmail } = require('../emails/account');
 // creating new user
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
+  console.log(user);
   try {
     await user.save();
     const email = {
@@ -15,7 +16,8 @@ router.post('/users', async (req, res) => {
       subject: `Welcome to the site ${user.name}`,
       text: `Welcome my friend, this is youre email ${user.email}`,
     };
-    sendGenericEmail(email);
+    console.log(email);
+    // sendGenericEmail(email);
     console.log('email sent:', email);
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
@@ -62,7 +64,7 @@ router.post('/users/login', async (req, res) => {
 });
 
 // get profile
-router.get('/users/profile', auth, async (req, res) => {
+router.get('/users/me', auth, async (req, res) => {
   res.status(200).send(req.user);
   try {
   } catch (err) {
@@ -173,6 +175,7 @@ router.post(
 );
 
 router.delete('/users/me/avatar', auth, async (req, res) => {
+  console.log('in avatar');
   try {
     req.user.avatar = undefined;
     await req.user.save();

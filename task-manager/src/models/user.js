@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
+
       validate(value) {
         if (value < 1) {
           throw new Error('Age must be a positive number');
