@@ -26,7 +26,7 @@ beforeEach(async () => {
 afterEach(() => {});
 
 test('should sign up a new user', async () => {
-  await request(app)
+  const response = await request(app)
     .post('/users')
     .send({
       name: 'moti',
@@ -35,6 +35,20 @@ test('should sign up a new user', async () => {
       age: 23,
     })
     .expect(201);
+
+  const user = await User.findById(response.body.user._id);
+  console.log('user', user);
+  // expect(user).not.toBeNull();
+  // expect(response.body.user.name).toBe(user.name);
+  // expect(response.body).toMatchObject({
+  //   user: {
+  //     name: 'moti',
+  //     email: 'moti@gmail.com',
+  //   },
+  //   token: user.tokens[0].token,
+  // });
+
+  // expect(user.tokens[1]).not.toBe(response.body.token);
 });
 
 test('should not login nonexist user', async () => {
@@ -50,7 +64,7 @@ test('should not login nonexist user', async () => {
 });
 
 test('should get user profile for user', async () => {
-  await request(app)
+  const response = await request(app)
     .get('/users/me')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .send()
@@ -59,4 +73,21 @@ test('should get user profile for user', async () => {
 
 test('should not get user profile for user', async () => {
   await request(app).get('/users/me').send().expect(401);
+});
+
+test('should delete user profile.', async () => {
+  await await request(app)
+    .delete('/users/')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .send();
+  const user = User.findById(userOneId);
+  expect(user).toBeNull();
+});
+
+test('should not delete user profile.', async () => {
+  await await request(app)
+    .delete('/users/')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}1`)
+    .send()
+    .expect(401);
 });

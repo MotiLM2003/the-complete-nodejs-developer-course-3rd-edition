@@ -8,7 +8,7 @@ const { sendGenericEmail } = require('../emails/account');
 // creating new user
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
-  console.log(user);
+
   try {
     await user.save();
     const email = {
@@ -16,13 +16,12 @@ router.post('/users', async (req, res) => {
       subject: `Welcome to the site ${user.name}`,
       text: `Welcome my friend, this is youre email ${user.email}`,
     };
-    console.log(email);
+
     // sendGenericEmail(email);
-    console.log('email sent:', email);
+
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (err) {
-    console.log('here', err.message);
     res.status(400).send(err);
   }
 });
@@ -58,7 +57,6 @@ router.post('/users/login', async (req, res) => {
     const token = await user.generateAuthToken();
     res.send({ user: user, token });
   } catch (error) {
-    console.log(error);
     res.status(400).send('could not authenticate user');
   }
 });
@@ -112,17 +110,16 @@ router.patch('/users/:id', auth, async (req, res) => {
   }
 });
 
-router.delete('/users/:id', auth, async (req, res) => {
-  const id = req.params.id;
-  const { name, email } = req.user;
+router.delete('/users/', auth, async (req, res) => {
+  const { _id } = req.user;
 
   try {
-    const deleted = await User.findByIdAndDelete(id);
-    sendGenericEmail({
-      to: email,
-      subject: "We are sorry you're leaaving",
-      text: `Hello, ${name}, We are sorry to see you leave we hope that we will meet again one day!`,
-    });
+    const deleted = await User.findByIdAndDelete(_id);
+    // sendGenericEmail({
+    //   to: email,
+    //   subject: "We are sorry you're leaaving",
+    //   text: `Hello, ${name}, We are sorry to see you leave we hope that we will meet again one day!`,
+    // });
     res.send(deleted);
   } catch (error) {
     res.status(400).send(error);
@@ -175,7 +172,6 @@ router.post(
 );
 
 router.delete('/users/me/avatar', auth, async (req, res) => {
-  console.log('in avatar');
   try {
     req.user.avatar = undefined;
     await req.user.save();
