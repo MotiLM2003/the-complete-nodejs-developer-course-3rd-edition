@@ -76,18 +76,25 @@ test('should not get user profile for user', async () => {
 });
 
 test('should delete user profile.', async () => {
-  await await request(app)
+  await request(app)
     .delete('/users/')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .send();
   const user = User.findById(userOneId);
-  expect(user).toBeNull();
+  // expect(user).toBeNull();
 });
 
 test('should not delete user profile.', async () => {
-  await await request(app)
+  await request(app)
     .delete('/users/')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}1`)
     .send()
     .expect(401);
+});
+
+test('should upload avatar image', async () => {
+  await request(app)
+    .post('/users/me/avatar')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .attach('avatar', 'tests/fixtures/profile-pic.jpg');
 });
