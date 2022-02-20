@@ -106,7 +106,7 @@ router.delete('/tasks/:id', auth, async (req, res) => {
     const deleted = await Task.findOneAndDelete({ id, owner });
     res.send(deleted);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(404).send(error);
   }
 });
 

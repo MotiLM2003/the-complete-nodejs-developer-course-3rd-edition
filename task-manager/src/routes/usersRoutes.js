@@ -82,7 +82,7 @@ router.get('/users/:id', auth, async (req, res) => {
   }
 });
 
-router.patch('/users/:id', auth, async (req, res) => {
+router.patch('/users/me', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
 
@@ -93,7 +93,7 @@ router.patch('/users/:id', auth, async (req, res) => {
     return res.status(400).send('Error: invalid fields were in updates');
   }
 
-  const id = req.params.id;
+  const id = req.user._id;
   const filter = req.body;
 
   try {
