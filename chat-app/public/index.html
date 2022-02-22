@@ -8,8 +8,12 @@
   </head>
   <body>
     <h1>Chat App</h1>
-    <h2>Current count <span id="currentCount"></span></h2>
-    <button id="btnIncButton">Increase count by 1</button>
+    <h2>Message</h2>
+
+    <input id="txtMessage" type="text" value="" />
+    <button id="btnSendMessage">Send</button>
+    <button id="btnShareLocation">Share location</button>
+    <div id="messages"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/chat.js"></script>
   </body>
