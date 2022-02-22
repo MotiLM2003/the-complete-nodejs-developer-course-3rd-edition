@@ -29,7 +29,9 @@ btnShareLocation.addEventListener('click', () => {
 const sendUserMessage = () => {
   let message = txtMessage.value;
   if (!message || !(message.length > 0)) return;
-  socket.emit('sendMessage', message);
+  socket.emit('sendMessage', message, (acknowledge) => {
+    console.log(acknowledge);
+  });
   txtMessage.value = '';
   txtMessage.focus();
 };
