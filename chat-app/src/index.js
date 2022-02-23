@@ -13,7 +13,10 @@ app.use(express.static(path.join(__dirname, '../public/')));
 let count = 0;
 io.on('connection', (socket) => {
   // single welcome user to the connected client
-  socket.emit('newUserMessage', 'Welcome to the chat!');
+  socket.emit('newUserMessage', {
+    text: 'Welcome',
+    createAt: new Date().getTime(),
+  });
   socket.broadcast.emit('newUserMessage', 'new user has joined the chat!');
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter();
@@ -26,7 +29,7 @@ io.on('connection', (socket) => {
 
   socket.on('shareLocation', ({ latitude, longitude }, callback) => {
     io.emit(
-      'messageRecived',
+      'locationMessage',
       `https://google.com/maps?q=${latitude},${longitude}`
     );
     callback();

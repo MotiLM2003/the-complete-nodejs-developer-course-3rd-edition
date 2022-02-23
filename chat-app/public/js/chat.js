@@ -7,6 +7,7 @@ const $messages = document.getElementById('messages');
 
 // templates
 const messageTemplate = document.getElementById('message-template').innerHTML;
+const locationTemplate = document.getElementById('location-template').innerHTML;
 
 let messages = '';
 txtMessage.value = '';
@@ -50,6 +51,14 @@ const sendUserMessage = () => {
   txtMessage.value = '';
   txtMessage.focus();
 };
+
+socket.on('locationMessage', (url) => {
+  const html = Mustache.render(locationTemplate, {
+    location: url,
+    message: 'User sent his location',
+  });
+  $messages.insertAdjacentHTML('beforeend', html);
+});
 
 socket.on('newUserMessage', (message) => {
   console.log('here');
