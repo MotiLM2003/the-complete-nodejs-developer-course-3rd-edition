@@ -3,6 +3,11 @@ const socket = io();
 const txtMessage = document.getElementById('txtMessage');
 const btnSendMessage = document.getElementById('btnSendMessage');
 const btnShareLocation = document.getElementById('btnShareLocation');
+const $messages = document.getElementById('messages');
+
+// templates
+const messageTemplate = document.getElementById('message-template').innerHTML;
+
 let messages = '';
 txtMessage.value = '';
 
@@ -57,7 +62,11 @@ socket.on('userLeft', (message) => {
 
 socket.on('messageRecived', (message) => {
   console.log('new message', message);
-  messages += `<br /> ${message}`;
-  document.getElementById('messages').innerHTML = messages;
+  // messages += `<br /> ${message}`;
+  // document.getElementById('messages').innerHTML = messages;
   //   txtMessage.value = '';
+  const html = Mustache.render(messageTemplate, {
+    message,
+  });
+  $messages.insertAdjacentHTML('beforeend', html);
 });

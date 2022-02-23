@@ -8,14 +8,15 @@
   </head>
   <body>
     <h1>Chat App</h1>
-    <div id="messages"></div>
-
     <input id="txtMessage" type="text" value="" />
     <button id="btnSendMessage">Send</button>
+
+    <div id="messages"></div>
+
     <button id="btnShareLocation">Share location</button>
 
     <script id="message-template" type="text/html">
-      <div><p>This is a message</p></div>
+      <div><p>{{message}}</p></div>
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
