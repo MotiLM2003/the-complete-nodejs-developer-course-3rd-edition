@@ -20,23 +20,34 @@ btnShareLocation.addEventListener('click', () => {
   if (!navigator.geolocation) {
     return alert('You dont have support for geolocation');
   }
-
+  btnShareLocation.disabled = true;
   navigator.geolocation.getCurrentPosition((position) => {
     const { latitude, longitude } = position.coords;
-    socket.emit('shareLocation', { latitude, longitude });
+    socket.emit('shareLocation', { latitude, longitude }, (error) => {
+      if (error) {
+        btnShareLocation.disabled = false;
+
+        return error;
+      }
+      btnShareLocation.disabled = false;
+      console.log('locatioon shared');
+    });
   });
 });
 const sendUserMessage = () => {
   let message = txtMessage.value;
   if (!message || !(message.length > 0)) return;
-  socket.emit('sendMessage', message, (acknowledge) => {
-    console.log(acknowledge);
+  socket.emit('sendMessage', message, (error) => {
+    if (error) {
+      return console.log(error);
+    }
   });
   txtMessage.value = '';
   txtMessage.focus();
 };
 
 socket.on('newUserMessage', (message) => {
+  console.log('here');
   console.log(message);
 });
 
