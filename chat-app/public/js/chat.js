@@ -52,17 +52,18 @@ const sendUserMessage = () => {
   txtMessage.focus();
 };
 
-socket.on('locationMessage', (url) => {
+socket.on('locationMessage', (data) => {
+  const { url, message, createdAt } = data;
   const html = Mustache.render(locationTemplate, {
-    location: url,
-    message: 'User sent his location',
+    url,
+    message,
+    createdAt: moment(createdAt).format('HH:mm:s'),
   });
   $messages.insertAdjacentHTML('beforeend', html);
 });
 
 socket.on('newUserMessage', (message) => {
-  console.log('here');
-  console.log(message);
+  console.log(message.text);
 });
 
 socket.on('userLeft', (message) => {
@@ -70,12 +71,14 @@ socket.on('userLeft', (message) => {
 });
 
 socket.on('messageRecived', (message) => {
-  console.log('new message', message);
   // messages += `<br /> ${message}`;
   // document.getElementById('messages').innerHTML = messages;
   //   txtMessage.value = '';
+  const { text, createdAt } = message;
+  console.log('text', text);
   const html = Mustache.render(messageTemplate, {
-    message,
+    message: text,
+    createdAt: moment(createdAt).format('HH:mm:s'),
   });
   $messages.insertAdjacentHTML('beforeend', html);
 });
