@@ -90,5 +90,8 @@ socket.on('messageRecived', (message) => {
 });
 
 socket.emit('join', { username, room }, (error) => {
+  if (error) {
+    console.log('test');
+  }
   console.log(error);
 });
