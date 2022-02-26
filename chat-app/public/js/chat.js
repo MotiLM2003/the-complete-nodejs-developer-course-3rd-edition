@@ -9,6 +9,12 @@ const $messages = document.getElementById('messages');
 const messageTemplate = document.getElementById('message-template').innerHTML;
 const locationTemplate = document.getElementById('location-template').innerHTML;
 
+// options
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
+
+console.log('usernaem', location.search, username);
 let messages = '';
 txtMessage.value = '';
 
@@ -81,4 +87,8 @@ socket.on('messageRecived', (message) => {
     createdAt: moment(createdAt).format('HH:mm:s'),
   });
   $messages.insertAdjacentHTML('beforeend', html);
+});
+
+socket.emit('join', { username, room }, (error) => {
+  console.log(error);
 });

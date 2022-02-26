@@ -8,6 +8,12 @@ const Filter = require('bad-words');
 const path = require('path');
 
 const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+} = require('./utils/users');
+const {
   generateMessage,
   generateLocationMessage,
 } = require('./utils/messages');
@@ -18,11 +24,7 @@ app.use(express.static(path.join(__dirname, '../public/')));
 let count = 0;
 io.on('connection', (socket) => {
   // single welcome user to the connected client
-  socket.emit('messageRecived', generateMessage('Welcome'));
-  socket.broadcast.emit(
-    'messageRecived',
-    generateMessage('new user has joined the chat!')
-  );
+
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter();
     if (filter.isProfane(message)) {
@@ -44,7 +46,35 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    io.emit('messageRecived', generateMessage('user has left'));
+    const user = removeUser(socket.id);
+    if (!user) {
+      return new Error('');
+    }
+    io.to(user.room).emit(
+      'messageRecived',
+      generateMessage(`${user.username} has left room ${room}`)
+    );
+  });
+
+  socket.on('join', ({ username, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, username, room });
+    if (!error) {
+      callback(error);
+    }
+
+    socket.join(room);
+    socket.emit(
+      'messageRecived',
+      generateMessage(`Hi ${username}, welcome to ${room}`)
+    );
+    socket.broadcast
+      .to(room)
+      .emit(
+        'messageRecived',
+        generateMessage(`${username} has joined to room: ${room}`)
+      );
+
+    callback();
   });
 });
 server.listen(3000, () => {
