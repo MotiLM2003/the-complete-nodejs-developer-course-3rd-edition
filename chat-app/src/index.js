@@ -18,10 +18,9 @@ const {
   generateLocationMessage,
 } = require('./utils/messages');
 
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '../public/')));
 
-let count = 0;
 io.on('connection', (socket) => {
   // single welcome user to the connected client
 
@@ -34,7 +33,10 @@ io.on('connection', (socket) => {
     //   return callback('words not allowed');
     // }
     console.log('test');
-    io.to(user.room).emit('messageRecived', generateMessage(message));
+    io.to(user.room).emit(
+      'messageRecived',
+      generateMessage(`${message}`, user.username)
+    );
     callback();
   });
 
@@ -59,29 +61,35 @@ io.on('connection', (socket) => {
       'messageRecived',
       generateMessage(`${user.username} has left room ${room}`)
     );
+    io.to(user.room).emit('usersList', {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
   });
 
   socket.on('join', async ({ username, room }, callback) => {
-    console.log('sendMessage fired');
     const { error, user } = addUser({ id: socket.id, username, room });
     console.log('error', error);
     if (error) {
+      console.log('in error 1');
       return callback(error, undefined);
     }
 
     socket.join(room);
-    // socket.emit(
-    //   'messageRecived',
-    //   generateMessage(`Hi ${username}, welcome to ${room}`)
-    // );
+    socket.emit(
+      'messageRecived',
+      generateMessage(`Hi ${username}, welcome to ${room}`, 'Admin')
+    );
+
     socket.broadcast.emit(
       'messageRecived',
       generateMessage(`${username} has joined to room: ${room}`)
     );
+    io.to(room).emit('usersList', { room: room, users: getUsersInRoom(room) });
 
     callback();
   });
 });
-server.listen(3000, () => {
+server.listen(PORT, () => {
   console.log('listining');
 });

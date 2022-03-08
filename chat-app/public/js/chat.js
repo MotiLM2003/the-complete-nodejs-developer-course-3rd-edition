@@ -8,7 +8,7 @@ const $messages = document.getElementById('messages');
 // templates
 const messageTemplate = document.getElementById('message-template').innerHTML;
 const locationTemplate = document.getElementById('location-template').innerHTML;
-
+const sidebarTemplate = document.getElementById('sidebar-template').innerHTML;
 // options
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
@@ -80,20 +80,29 @@ socket.on('messageRecived', (message) => {
   // messages += `<br /> ${message}`;
   // document.getElementById('messages').innerHTML = messages;
   //   txtMessage.value = '';
-  console.log('message recived');
-  const { text, createdAt } = message;
+
+  const { text, createdAt, userName } = message;
   console.log('text', text);
   const html = Mustache.render(messageTemplate, {
     message: text,
     createdAt: moment(createdAt).format('HH:mm:s'),
+    userName,
   });
   $messages.insertAdjacentHTML('beforeend', html);
 });
 
 socket.emit('join', { username, room }, (error) => {
+  console.log(`${username} is joining room: ${room}`);
+
   console.log('error', error);
   if (error) {
     console.log('test');
   }
   console.log(error);
+});
+
+socket.on('usersList', ({ room, users }) => {
+  console.log('test 2');
+  const html = Mustache.render(sidebarTemplate, { room, users });
+  document.getElementById('sidebar').innerHTML = html;
 });
