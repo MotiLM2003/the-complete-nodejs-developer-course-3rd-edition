@@ -26,16 +26,21 @@ io.on('connection', (socket) => {
   // single welcome user to the connected client
 
   socket.on('sendMessage', (message, callback) => {
-    const filter = new Filter();
-    if (filter.isProfane(message)) {
-      return callback('words not allowed');
-    }
-    io.emit('messageRecived', generateMessage(message));
+    console.log('sendMessage fired');
+    const user = getUser(socket.id);
+
+    // const filter = new Filter();
+    // if (filter.isProfane(message)) {
+    //   return callback('words not allowed');
+    // }
+    console.log('test');
+    io.to(user.room).emit('messageRecived', generateMessage(message));
     callback();
   });
 
   socket.on('shareLocation', ({ latitude, longitude }, callback) => {
-    io.emit(
+    const user = getUser(socket.id);
+    io.to(user.room).emit(
       'locationMessage',
       generateLocationMessage(
         `https://google.com/maps?q=${latitude},${longitude}`,
@@ -50,29 +55,29 @@ io.on('connection', (socket) => {
     if (!user) {
       return new Error('');
     }
-    io.to(user.room).emit(
+    io.room(user.room).emit(
       'messageRecived',
       generateMessage(`${user.username} has left room ${room}`)
     );
   });
 
-  socket.on('join', ({ username, room }, callback) => {
+  socket.on('join', async ({ username, room }, callback) => {
+    console.log('sendMessage fired');
     const { error, user } = addUser({ id: socket.id, username, room });
-    if (!error) {
-      callback(error);
+    console.log('error', error);
+    if (error) {
+      return callback(error, undefined);
     }
 
     socket.join(room);
-    socket.emit(
+    // socket.emit(
+    //   'messageRecived',
+    //   generateMessage(`Hi ${username}, welcome to ${room}`)
+    // );
+    socket.broadcast.emit(
       'messageRecived',
-      generateMessage(`Hi ${username}, welcome to ${room}`)
+      generateMessage(`${username} has joined to room: ${room}`)
     );
-    socket.broadcast
-      .to(room)
-      .emit(
-        'messageRecived',
-        generateMessage(`${username} has joined to room: ${room}`)
-      );
 
     callback();
   });

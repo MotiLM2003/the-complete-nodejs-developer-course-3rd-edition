@@ -10,8 +10,9 @@ const addUser = ({ id, username, room }) => {
   }
 
   // check for existing users
-  const isExists = users.find((x) => x === username);
+  const isExists = users.find((x) => x.username === username);
   if (isExists) {
+    console.log('here2');
     return {
       error: 'User already exists',
     };
@@ -20,6 +21,7 @@ const addUser = ({ id, username, room }) => {
   // store user
   const newUser = { id, username, room };
   users.push(newUser);
+  console.log('user name', username);
 
   return { newUser };
 };

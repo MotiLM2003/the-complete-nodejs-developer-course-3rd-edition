@@ -80,6 +80,7 @@ socket.on('messageRecived', (message) => {
   // messages += `<br /> ${message}`;
   // document.getElementById('messages').innerHTML = messages;
   //   txtMessage.value = '';
+  console.log('message recived');
   const { text, createdAt } = message;
   console.log('text', text);
   const html = Mustache.render(messageTemplate, {
@@ -90,6 +91,7 @@ socket.on('messageRecived', (message) => {
 });
 
 socket.emit('join', { username, room }, (error) => {
+  console.log('error', error);
   if (error) {
     console.log('test');
   }
